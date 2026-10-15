@@ -3,6 +3,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useProductos } from '../context/ProductosContext';
+import ProductoItem from '../components/ProductoItem';
 
 // Navegación hacia el formulario de alta.
 type Props = {
@@ -20,12 +21,12 @@ export default function HomeScreen({ navigation }: Props) {
     eliminarProducto,
   } = useProductos();
 
-  // Contamos los útiles que todavía no están comprados.
+  // Contamos los útiles pendientes de compra.
   const pendientes = productos.filter(
     (producto) => !producto.comprado
   ).length;
 
-  // Cambiamos el estado del útil seleccionado.
+  // Cambiamos entre comprado y pendiente.
   async function handleMarcar(id: string) {
     try {
       await marcarProducto(id);
@@ -34,7 +35,7 @@ export default function HomeScreen({ navigation }: Props) {
     }
   }
 
-  // Eliminamos el útil de la lista.
+  // Eliminamos el útil seleccionado.
   async function handleEliminar(id: string) {
     try {
       await eliminarProducto(id);
@@ -54,7 +55,7 @@ export default function HomeScreen({ navigation }: Props) {
         disabled={cargando}
       />
 
-      {/* Mostramos la lista y las acciones de cada útil. */}
+      {/* Reutilizamos ProductoItem para cada útil de la lista. */}
       <FlatList
         style={styles.lista}
         data={productos}
@@ -65,26 +66,11 @@ export default function HomeScreen({ navigation }: Props) {
           </Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.producto}>
-            <Text
-              style={[
-                styles.nombre,
-                item.comprado && styles.comprado,
-              ]}
-            >
-              {item.nombre}
-            </Text>
-
-            <Button
-              title={item.comprado ? 'Marcar pendiente' : 'Marcar comprado'}
-              onPress={() => handleMarcar(item.id)}
-            />
-
-            <Button
-              title="Eliminar"
-              onPress={() => handleEliminar(item.id)}
-            />
-          </View>
+          <ProductoItem
+            producto={item}
+            onMarcar={() => handleMarcar(item.id)}
+            onEliminar={() => handleEliminar(item.id)}
+          />
         )}
       />
 
@@ -93,7 +79,7 @@ export default function HomeScreen({ navigation }: Props) {
   );
 }
 
-// Estilos de la pantalla y de cada útil.
+// Los estilos de cada útil quedaron en ProductoItem.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -110,18 +96,5 @@ const styles = StyleSheet.create({
   lista: {
     flex: 1,
     marginVertical: 16,
-  },
-  producto: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  nombre: {
-    fontSize: 18,
-    marginBottom: 8,
-  },
-  comprado: {
-    textDecorationLine: 'line-through',
-    color: '#666',
   },
 });
