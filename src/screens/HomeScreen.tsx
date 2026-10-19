@@ -1,9 +1,8 @@
-import {
-  View, Text, Button, FlatList, StyleSheet, Alert,
-} from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, Alert,} from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { useProductos } from '../context/ProductosContext';
 import ProductoItem from '../components/ProductoItem';
+import { programarRecordatorio } from '../utils/notificaciones';
 
 // Navegación hacia el formulario de alta.
 type Props = {
@@ -44,6 +43,25 @@ export default function HomeScreen({ navigation }: Props) {
     }
   }
 
+// Programamos el recordatorio si hay útiles pendientes.
+async function handleRecordatorio() {
+  if (pendientes === 0) {
+    Alert.alert('Sin pendientes', 'Ya tenés todos los útiles comprados.');
+    return;
+  }
+
+  try {
+    await programarRecordatorio();
+    Alert.alert('Recordatorio', 'Recibirás una notificación en 5 segundos.');
+  } catch (error) {
+    const mensaje = error instanceof Error
+      ? error.message
+      : 'No se pudo programar el recordatorio.';
+
+    Alert.alert('Error', mensaje);
+  }
+}
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hola, {userNombre}</Text>
@@ -53,6 +71,12 @@ export default function HomeScreen({ navigation }: Props) {
         title="Agregar útil"
         onPress={() => navigation.navigate('AltaProducto')}
         disabled={cargando}
+      />
+
+      <Button
+          title="Recordar compra en 5 segundos"
+          onPress={handleRecordatorio}
+          disabled={cargando}
       />
 
       {/* Reutilizamos ProductoItem para cada útil de la lista. */}
