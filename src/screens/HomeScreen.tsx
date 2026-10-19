@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useProductos } from '../context/ProductosContext';
 import ProductoItem from '../components/ProductoItem';
 import { programarRecordatorio } from '../utils/notificaciones';
+import { contarPendientes } from '../utils/contarPendientes';
 
 // Navegación hacia el formulario de alta.
 type Props = {
@@ -21,9 +22,7 @@ export default function HomeScreen({ navigation }: Props) {
   } = useProductos();
 
   // Contamos los útiles pendientes de compra.
-  const pendientes = productos.filter(
-    (producto) => !producto.comprado
-  ).length;
+  const pendientes = contarPendientes(productos);
 
   // Cambiamos entre comprado y pendiente.
   async function handleMarcar(id: string) {
