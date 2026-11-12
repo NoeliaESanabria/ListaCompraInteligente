@@ -1,131 +1,98 @@
-// Herramientas para compartir la lista y cargar los datos al iniciar.
-import {createContext,useContext,useEffect,useState,ReactNode,} from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Alert } from 'react-native';
+import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Datos de cada útil escolar.
+// Los datos nuevos son opcionales para conservar los útiles del parcial 1.
 export type Producto = {
   id: string;
   nombre: string;
   comprado: boolean;
+  imagen?: string;
+  ubicacion?: { latitude: number; longitude: number };
+  contacto?: { id: string; nombre: string; telefono?: string };
+  eventoId?: string;
+  fechaRecordatorio?: string;
 };
 
-// Datos y acciones que compartirán las pantallas.
-type ProductosContextType = {
+type ProductosStore = {
   productos: Producto[];
   cargando: boolean;
-  agregarProducto: (nombre: string) => Promise<void>;
+  cargarProductos: () => Promise<void>;
+  agregarProducto: (nombre: string, datos?: Partial<Producto>) => Promise<void>;
+  actualizarProducto: (id: string, cambios: Partial<Producto>) => Promise<void>;
   marcarProducto: (id: string) => Promise<void>;
   eliminarProducto: (id: string) => Promise<void>;
 };
 
-// Clave distinta de la utilizada para guardar el usuario.
+// Conservamos la misma clave de almacenamiento del parcial 1.
 const PRODUCTOS_KEY = '@lista_compras_productos';
 
-const ProductosContext = createContext<
-  ProductosContextType | undefined
->(undefined);
+export const useProductos = create<ProductosStore>((set, get) => {
+  // Actualizamos la pantalla solo después de guardar correctamente.
+  async function guardarProductos(lista: Producto[]) {
+    await AsyncStorage.setItem(PRODUCTOS_KEY, JSON.stringify(lista));
+    set({ productos: lista });
+  }
 
-export function ProductosProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  // Lista compartida y estado de la carga inicial.
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const [cargando, setCargando] = useState(true);
+  return {
+    productos: [],
+    cargando: true,
 
-  // Recuperamos la lista guardada cuando se monta el proveedor.
-  useEffect(() => {
-    async function cargarProductos() {
+    cargarProductos: async () => {
       try {
         const guardados = await AsyncStorage.getItem(PRODUCTOS_KEY);
-
         if (guardados !== null) {
-          setProductos(JSON.parse(guardados));
+          set({ productos: JSON.parse(guardados) });
         }
-      } catch {
-        Alert.alert('Error', 'No se pudieron cargar los útiles.');
       } finally {
-        setCargando(false);
+        set({ cargando: false });
       }
-    }
+    },
 
-    cargarProductos();
+    agregarProducto: async (nombre, datos = {}) => {
+      const nombreLimpio = nombre.trim();
+      if (nombreLimpio === '') {
+        throw new Error('Escribí el nombre del útil.');
+      }
+      const nuevoProducto: Producto = {
+        ...datos,
+        id: Date.now().toString(),
+        nombre: nombreLimpio,
+        comprado: false,
+      };
+      await guardarProductos([...get().productos, nuevoProducto]);
+    },
+
+    actualizarProducto: async (id, cambios) => {
+      const actualizados = get().productos.map((producto) =>
+        producto.id === id ? { ...producto, ...cambios } : producto
+      );
+      await guardarProductos(actualizados);
+    },
+
+    marcarProducto: async (id) => {
+      const producto = get().productos.find((item) => item.id === id);
+      if (producto) {
+        await get().actualizarProducto(id, { comprado: !producto.comprado });
+      }
+    },
+
+    eliminarProducto: async (id) => {
+      const actualizados = get().productos.filter((producto) => producto.id !== id);
+      await guardarProductos(actualizados);
+    },
+  };
+});
+
+// Conservamos el proveedor del proyecto original para cargar los datos al iniciar.
+// El estado de la lista ahora se maneja con Zustand, como pide el parcial 2.
+export function ProductosProvider({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    useProductos.getState().cargarProductos().catch(() => {
+      Alert.alert('Error', 'No se pudieron cargar los útiles.');
+    });
   }, []);
 
-  // Guardamos la lista y después actualizamos lo que muestra la app.
-  async function guardarProductos(lista: Producto[]) {
-    await AsyncStorage.setItem(
-      PRODUCTOS_KEY,
-      JSON.stringify(lista)
-    );
-
-    setProductos(lista);
-  }
-
-  // Agregamos un útil pendiente de compra.
-  async function agregarProducto(nombre: string) {
-    const nombreLimpio = nombre.trim();
-
-    if (nombreLimpio === '') {
-      throw new Error('Escribí el nombre del útil.');
-    }
-
-    const nuevoProducto: Producto = {
-      id: Date.now().toString(),
-      nombre: nombreLimpio,
-      comprado: false,
-    };
-
-    await guardarProductos([...productos, nuevoProducto]);
-  }
-
-  // Cambiamos entre comprado y pendiente.
-  async function marcarProducto(id: string) {
-    const actualizados = productos.map((producto) =>
-      producto.id === id
-        ? { ...producto, comprado: !producto.comprado }
-        : producto
-    );
-
-    await guardarProductos(actualizados);
-  }
-
-  // Quitamos de la lista el producto seleccionado.
-  async function eliminarProducto(id: string) {
-    const actualizados = productos.filter(
-      (producto) => producto.id !== id
-    );
-
-    await guardarProductos(actualizados);
-  }
-
-  // Compartimos la lista y sus acciones.
-  return (
-    <ProductosContext.Provider
-      value={{
-        productos,
-        cargando,
-        agregarProducto,
-        marcarProducto,
-        eliminarProducto,
-      }}
-    >
-      {children}
-    </ProductosContext.Provider>
-  );
-}
-
-// Las pantallas accederán a la lista mediante useProductos().
-export function useProductos() {
-  const context = useContext(ProductosContext);
-
-  if (context === undefined) {
-    throw new Error(
-      'useProductos debe utilizarse dentro de ProductosProvider.'
-    );
-  }
-
-  return context;
+  return <>{children}</>;
 }

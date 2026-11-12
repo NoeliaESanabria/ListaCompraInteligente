@@ -1,6 +1,8 @@
 import { View, Text, Button, FlatList, StyleSheet, Alert,} from 'react-native';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useProductos } from '../context/ProductosContext';
+import { useProductos, type Producto } from '../context/ProductosContext';
+import { crearRecordatorioCalendario } from '../utils/recursosDispositivo';
 import ProductoItem from '../components/ProductoItem';
 import { programarRecordatorio } from '../utils/notificaciones';
 import { contarPendientes } from '../utils/contarPendientes';
@@ -19,26 +21,50 @@ export default function HomeScreen({ navigation }: Props) {
     cargando,
     marcarProducto,
     eliminarProducto,
+    actualizarProducto,
   } = useProductos();
+  const [ocupado, setOcupado] = useState(false);
+
+  async function handleCalendario(producto: Producto) {
+    if (ocupado || producto.eventoId) return;
+    setOcupado(true);
+    try {
+      const evento = await crearRecordatorioCalendario(producto);
+      await actualizarProducto(producto.id, evento);
+      Alert.alert('Calendario', 'Compra agendada para mañana a las 10, con aviso 10 minutos antes.');
+    } catch (error) {
+      Alert.alert('Error', error instanceof Error ? error.message : 'No se pudo crear el evento.');
+    } finally {
+      setOcupado(false);
+    }
+  }
 
   // Contamos los útiles pendientes de compra.
   const pendientes = contarPendientes(productos);
 
   // Cambiamos entre comprado y pendiente.
   async function handleMarcar(id: string) {
+    if (ocupado) return;
+    setOcupado(true);
     try {
       await marcarProducto(id);
     } catch {
       Alert.alert('Error', 'No se pudo cambiar el estado del útil.');
+    } finally {
+      setOcupado(false);
     }
   }
 
   // Eliminamos el útil seleccionado.
   async function handleEliminar(id: string) {
+    if (ocupado) return;
+    setOcupado(true);
     try {
       await eliminarProducto(id);
     } catch {
       Alert.alert('Error', 'No se pudo eliminar el útil.');
+    } finally {
+      setOcupado(false);
     }
   }
 
@@ -69,14 +95,16 @@ async function handleRecordatorio() {
       <Button
         title="Agregar útil"
         onPress={() => navigation.navigate('AltaProducto')}
-        disabled={cargando}
+        disabled={cargando || ocupado}
       />
 
       <Button
           title="Recordar compra en 5 segundos"
           onPress={handleRecordatorio}
-          disabled={cargando}
+          disabled={cargando || ocupado}
       />
+
+      {ocupado && <Text>Esperando permiso o guardando cambios...</Text>}
 
       {/* Reutilizamos ProductoItem para cada útil de la lista. */}
       <FlatList
@@ -93,11 +121,13 @@ async function handleRecordatorio() {
             producto={item}
             onMarcar={() => handleMarcar(item.id)}
             onEliminar={() => handleEliminar(item.id)}
+            onCalendario={() => handleCalendario(item)}
+            ocupado={ocupado}
           />
         )}
       />
 
-      <Button title="Cerrar sesión" onPress={logout} />
+      <Button title="Cerrar sesión" onPress={logout} disabled={ocupado} />
     </View>
   );
 }

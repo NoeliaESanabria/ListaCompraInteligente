@@ -6,6 +6,22 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": [
+      ["expo-image-picker", {
+        "photosPermission": "Permití elegir una foto para el útil escolar.",
+        "cameraPermission": "Permití tomar una foto del útil escolar.",
+        "microphonePermission": false
+      }],
+      ["expo-location", {
+        "locationWhenInUsePermission": "Permití guardar la ubicación del comercio."
+      }],
+      ["expo-contacts", {
+        "contactsPermission": "Permití seleccionar un proveedor de tus contactos."
+      }],
+      ["expo-calendar", {
+        "calendarPermission": "Permití crear recordatorios para comprar útiles."
+      }]
+    ],
     "ios": {
       "supportsTablet": true
     },
