@@ -2,6 +2,73 @@
 
 Aplicación desarrollada con React Native, Expo y TypeScript para organizar la compra de útiles escolares.
 
+## Autora
+
+Noelia Sanabria
+
+## Tecnologías
+
+- React Native y Expo SDK 57.
+- TypeScript.
+- React Navigation con Native Stack.
+- AsyncStorage.gi
+- Zustand.
+- expo-notifications.
+- expo-image-picker.
+- expo-file-system.
+- expo-location.
+- expo-contacts.
+- expo-calendar.
+- Jest, jest-expo y React Native Testing Library.
+
+## Cómo ejecutar
+
+Se necesita Node.js, npm y un celular con Expo Go compatible con SDK 57.
+
+Desde la carpeta del proyecto:
+
+    npm ci
+    npm start
+
+Escanear el código QR con Expo Go. Para una conexión local, el celular y la computadora deben estar conectados a la misma red Wi-Fi.
+
+## Cómo usar la aplicación
+
+1. Registrar una cuenta e iniciar sesión.
+2. Entrar en «Agregar útil» y escribir el nombre.
+3. Tomar una foto o elegirla de la galería.
+4. Obtener la ubicación actual estando en el comercio.
+5. Seleccionar un proveedor de los contactos.
+6. Guardar el útil y revisar los datos en la lista.
+7. Marcarlo como comprado, eliminarlo o crear el evento de compra en el calendario.
+
+La foto, la ubicación y el contacto son opcionales. Para guardar un útil solo es obligatorio ingresar su nombre.
+
+El recordatorio local de 5 segundos se utiliza desde Home cuando hay útiles pendientes.
+
+## Tests
+
+Ejecutar:
+
+    npm test
+
+Se incluyen tres pruebas:
+
+1. Renderizado del nombre y los botones de `ProductoItem`.
+2. Ejecución de la acción de eliminar al presionar el botón.
+3. Cálculo de pendientes excluyendo los útiles comprados.
+
+## Pruebas en el celular
+
+Comprobar:
+
+- Acceso a cámara, galería, GPS, contactos y calendario.
+- Comportamiento al aceptar o rechazar permisos.
+- Cancelación de la selección de imagen o contacto.
+- Conservación de los datos al cerrar y volver a abrir la aplicación.
+- Recepción de la notificación local.
+- Creación del evento en el calendario
+
 ## Parcial 1
 
 ### Funcionalidades
@@ -79,74 +146,7 @@ El store contiene acciones para cargar, agregar, actualizar, marcar y eliminar p
 
 Se mantiene AsyncStorage para conservar los datos y recuperar los útiles guardados en el parcial 1. La autenticación conserva su contexto original.
 
-## Tecnologías
-
-- React Native y Expo SDK 57.
-- TypeScript.
-- React Navigation con Native Stack.
-- AsyncStorage.
-- Zustand.
-- expo-notifications.
-- expo-image-picker.
-- expo-file-system.
-- expo-location.
-- expo-contacts.
-- expo-calendar.
-- Jest, jest-expo y React Native Testing Library.
-
-## Cómo ejecutar
-
-Se necesita Node.js, npm y un celular con Expo Go compatible con SDK 57.
-
-Desde la carpeta del proyecto:
-
-    npm ci
-    npm start
-
-Escanear el código QR con Expo Go. Para una conexión local, el celular y la computadora deben estar conectados a la misma red Wi-Fi.
-
-## Cómo usar la aplicación
-
-1. Registrar una cuenta e iniciar sesión.
-2. Entrar en «Agregar útil» y escribir el nombre.
-3. Tomar una foto o elegirla de la galería.
-4. Obtener la ubicación actual estando en el comercio.
-5. Seleccionar un proveedor de los contactos.
-6. Guardar el útil y revisar los datos en la lista.
-7. Marcarlo como comprado, eliminarlo o crear el evento de compra en el calendario.
-
-La foto, la ubicación y el contacto son opcionales. Para guardar un útil solo es obligatorio ingresar su nombre.
-
-El recordatorio local de 5 segundos se utiliza desde Home cuando hay útiles pendientes.
-
-## Tests
-
-Ejecutar:
-
-    npm test
-
-Se incluyen tres pruebas:
-
-1. Renderizado del nombre y los botones de `ProductoItem`.
-2. Ejecución de la acción de eliminar al presionar el botón.
-3. Cálculo de pendientes excluyendo los útiles comprados.
-
-## Pruebas en el celular
-
-Comprobar:
-
-- Acceso a cámara, galería, GPS, contactos y calendario.
-- Comportamiento al aceptar o rechazar permisos.
-- Cancelación de la selección de imagen o contacto.
-- Conservación de los datos al cerrar y volver a abrir la aplicación.
-- Recepción de la notificación local.
-- Creación del evento en el calendario.
-
 ## Videos de demostración
 
 - Parcial 1: pendiente de agregar enlace de YouTube.
 - Parcial 2: pendiente de agregar enlace de YouTube.
-
-## Autora
-
-Noelia Sanabria
