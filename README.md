@@ -57,6 +57,7 @@ Se incluyen tres pruebas:
 1. Renderizado del nombre y los botones de `ProductoItem`.
 2. Ejecución de la acción de eliminar al presionar el botón.
 3. Cálculo de pendientes excluyendo los útiles comprados.
+<img src="./assets/imagenTest/test.png" alt="Test" width="300" />
 
 ## Pruebas en el celular
 
