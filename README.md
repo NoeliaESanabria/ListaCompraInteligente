@@ -11,7 +11,7 @@ Noelia Sanabria
 - React Native y Expo SDK 57.
 - TypeScript.
 - React Navigation con Native Stack.
-- AsyncStorage.gi
+- AsyncStorage.
 - Zustand.
 - expo-notifications.
 - expo-image-picker.
@@ -37,12 +37,12 @@ Escanear el código QR con Expo Go. Para una conexión local, el celular y la co
 1. Registrar una cuenta e iniciar sesión.
 2. Entrar en «Agregar útil» y escribir el nombre.
 3. Tomar una foto o elegirla de la galería.
-4. Obtener la ubicación actual estando en el comercio.
+4. Escribir la dirección del comercio o guardar la ubicación actual si estás en el comercio.
 5. Seleccionar un proveedor de los contactos.
 6. Guardar el útil y revisar los datos en la lista.
 7. Marcarlo como comprado, eliminarlo o crear el evento de compra en el calendario.
 
-La foto, la ubicación y el contacto son opcionales. Para guardar un útil solo es obligatorio ingresar su nombre.
+La foto, la dirección, la ubicación y el contacto son opcionales. Para guardar un útil solo es obligatorio ingresar su nombre.
 
 El recordatorio local de 5 segundos se utiliza desde Home cuando hay útiles pendientes.
 
@@ -112,6 +112,7 @@ Se continúa la aplicación del parcial 1 incorporando recursos del dispositivo 
 
 ### Ubicación
 
+- Escribir manualmente la dirección del comercio donde se quiere comprar.
 - Obtener la ubicación actual del dispositivo.
 - Asociarla al útil como ubicación del comercio.
 - Mostrar sus coordenadas en la lista.
@@ -127,6 +128,9 @@ Se continúa la aplicación del parcial 1 incorporando recursos del dispositivo 
 - Crear un evento de compra vinculado a un útil.
 - Programarlo para el día siguiente a las 10, con un aviso 10 minutos antes.
 - Guardar la fecha y el identificador del evento en el producto.
+
+El evento utiliza la dirección escrita del comercio. Si no se ingresó una dirección,
+utiliza las coordenadas GPS guardadas, cuando estén disponibles.
 
 Se utiliza el primer calendario editable del dispositivo. Si no hay uno disponible, se muestra un mensaje.
 

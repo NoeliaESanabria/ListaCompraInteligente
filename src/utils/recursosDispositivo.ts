@@ -92,9 +92,9 @@ export async function crearRecordatorioCalendario(producto: Producto) {
     startDate: inicio,
     endDate: fin,
     notes: `Lista de útiles. Producto: ${producto.id}. Proveedor: ${producto.contacto?.nombre || 'Sin contacto'}.`,
-    location: producto.ubicacion
+    location: producto.direccion || (producto.ubicacion
       ? `${producto.ubicacion.latitude}, ${producto.ubicacion.longitude}`
-      : '',
+      : ''),
     alarms: [{ relativeOffset: -10 }],
   });
   return { eventoId, fechaRecordatorio: inicio.toISOString() };

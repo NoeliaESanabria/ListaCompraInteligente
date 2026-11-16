@@ -16,6 +16,7 @@ type Props = {
 export default function AltaProductoScreen({ navigation }: Props) {
   // Nombre ingresado y acceso a la lista compartida.
   const [nombre, setNombre] = useState('');
+  const [direccion, setDireccion] = useState('');
   const { agregarProducto, cargando } = useProductos();
   const [imagen, setImagen] = useState<string>();
   const [ubicacion, setUbicacion] = useState<Producto['ubicacion']>();
@@ -49,7 +50,12 @@ export default function AltaProductoScreen({ navigation }: Props) {
     setOcupado(true);
     try {
       // El store comprueba que el nombre no esté vacío.
-      await agregarProducto(nombre, { imagen, ubicacion, contacto });
+      await agregarProducto(nombre, {
+        imagen,
+        direccion: direccion.trim(),
+        ubicacion,
+        contacto,
+      });
       navigation.goBack();
     } catch (error) {
       const mensaje = error instanceof Error
@@ -78,9 +84,14 @@ export default function AltaProductoScreen({ navigation }: Props) {
       <Button title="Elegir de galería" onPress={() => handleRecurso('galeria')} disabled={ocupado} />
       {imagen && <Image source={{ uri: imagen }} style={styles.imagen} accessibilityLabel="Foto del útil" />}
 
-      <Text>Guardá la ubicación cuando estés en el comercio.</Text>
-      <Button title="Ubicación actual del comercio" onPress={() => handleRecurso('ubicacion')} disabled={ocupado} />
-      {ubicacion && <Text>Comercio: {ubicacion.latitude.toFixed(5)}, {ubicacion.longitude.toFixed(5)}</Text>}
+      <TextInput
+        style={styles.input}
+        placeholder="Dirección del comercio (opcional)"
+        value={direccion}
+        onChangeText={setDireccion}
+      />
+      <Button title="Estoy en el comercio: guardar ubicación actual" onPress={() => handleRecurso('ubicacion')} disabled={ocupado} />
+      {ubicacion && <Text>Ubicación GPS: {ubicacion.latitude.toFixed(5)}, {ubicacion.longitude.toFixed(5)}</Text>}
 
       <Button title="Seleccionar proveedor de contactos" onPress={() => handleRecurso('contacto')} disabled={ocupado} />
       {contacto && <Text>Proveedor: {contacto.nombre} {contacto.telefono}</Text>}

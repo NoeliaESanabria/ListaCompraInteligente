@@ -31,8 +31,9 @@ export default function ProductoItem({
       {producto.imagen && (
         <Image source={{ uri: producto.imagen }} style={styles.imagen} accessibilityLabel={`Foto de ${producto.nombre}`} />
       )}
+      {!!producto.direccion && <Text>Dirección del comercio: {producto.direccion}</Text>}
       {producto.ubicacion && (
-        <Text>Comercio: {producto.ubicacion.latitude.toFixed(5)}, {producto.ubicacion.longitude.toFixed(5)}</Text>
+        <Text>Ubicación GPS: {producto.ubicacion.latitude.toFixed(5)}, {producto.ubicacion.longitude.toFixed(5)}</Text>
       )}
       {producto.contacto && (
         <Text>Proveedor: {producto.contacto.nombre} {producto.contacto.telefono}</Text>

@@ -9,6 +9,7 @@ export type Producto = {
   nombre: string;
   comprado: boolean;
   imagen?: string;
+  direccion?: string;
   ubicacion?: { latitude: number; longitude: number };
   contacto?: { id: string; nombre: string; telefono?: string };
   eventoId?: string;
