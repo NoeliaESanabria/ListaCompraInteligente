@@ -151,5 +151,5 @@ Se mantiene AsyncStorage para conservar los datos y recuperar los útiles guarda
 
 - Parcial 1: pendiente de agregar enlace de YouTube.
 - Parcial 2: pendiente de agregar enlace de YouTube.
-[![Ver video en YouTube](https://youtube.com/shorts/xlbjtSpU7p8?feature=share)]
+[![Ver video en YouTube](https://www.youtube.com/shorts/xlbjtSpU7p8)]
 
